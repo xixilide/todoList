@@ -62,35 +62,43 @@ export default class App extends Component {
 　将受控组件变成非受控的
 
 ```js
+import React, { PropTypes } from 'react'
+
 class Form extends React.Component {
   constructor(){
     super();
     this.state = {
-      value:'aa'
+      value:'lime'
   }
   }
-  handleSubmit(e){
-    e.preventDefault();
-    // console.log(this.refs.input.value);
-    console.log(this.state.value);
-  }
+  handleSubmit(event) {
+   alert('Your favorite flavor is: ' + this.state.value);
+   event.preventDefault();
+ }
   //value 设置为一个可变的值
   handleChange(e){
     this.setState({value:e.target.value})
+  }
+  handleRadio(e){
+    e.preventDefault();
+     alert('Your favorite flavor is: ' +e.target.value);
   }
   render () {
     return(
       <div>
         <form onSubmit={this.handleSubmit.bind(this)}>
-          <input name="a" value={this.state.value} onChange={this.handleChange.bind(this)}/>
+
+            <input onChange={this.handleRadio.bind(this)} type="checkbox"  name="checkbox" value="A"/>A
+            <input onChange={this.handleRadio.bind(this)}  type="checkbox"  name="checkbox" value="B"/>B
+            <input onChange={this.handleRadio.bind(this)} type="checkbox" name="checkbox" value="C"/>C
           <input type="submit" value="tijiao" />
         </form>
       </div>
     )
   }
 }
-export default Form;
 
+export default Form;
 ```
 
 ### todo 添加列表
@@ -143,6 +151,42 @@ export default class TodoList extends Component {
 
     let list = this.props.items.map( (item,index) =>
       <li key={index}>{item}</li>
+    )
+    return (
+      <div>
+      <ul>
+        {list}
+      </ul>
+    </div>
+    );
+  }
+}
+```
+
+
+### 优化后的TodoList 实现删除选中操作
+```js
+import React,{Component, PropTypes} from 'react'
+
+export default class TodoList extends Component {
+
+handleChange(i){
+
+  //传入一个方法
+  this.props.handleComponent(i)
+}
+handleDelete(i){
+  this.props.handleDel(i)
+}
+  render() {
+    let list = this.props.items.map( (item,index) =>
+      // <li key={index}>{item}</li>
+      <div key={index}>
+        <input type="radio" checked={item.completed} onChange={this.handleChange.bind(this,index)}/>
+
+        <span style={item.completed ? {textDecoration: "line-through",color:'#ccc'} : null}>{item.title}</span>
+        <button onClick={this.handleDelete.bind(this,index)}>删除</button>
+      </div>
     )
     return (
       <div>
